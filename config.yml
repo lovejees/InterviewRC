@@ -1,0 +1,10 @@
+server:
+  applicationConnectors:
+  - type: http
+    port: 8080
+ 
+database:  
+ driverClass: org.postgresql.Driver
+ user: postgres
+ password: tiger
+ url: jdbc:postgresql://127.0.0.1:5432/PhoneTool
