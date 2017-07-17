@@ -11,6 +11,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -60,10 +61,11 @@ public class EmployeeResource {
 	}
 	
 
-	@Path("subtree/shortestpath/{employeeId}")
+	@Path("subtree/shortestpath/{employeeId1}/{employeeId2}")
 	@GET
-	public Response getShortestPath(@PathParam("employeeId") int employeeId) {
-		List<Employee> data = employeeDao.getSubTree(employeeId, false);
+	public Response getShortestPath(@PathParam("employeeId1") int employeeId1,
+			@PathParam("employeeId2") int employeeId2) {
+		List<Employee> data = employeeDao.getShortestPath(employeeId1, employeeId2);
 
 		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
@@ -75,7 +77,7 @@ public class EmployeeResource {
 	public Response createEmployee(List<Employee> employee) {
 		ApiResponse response = null;
 		List<Employee> emp = employeeDao.setEmployee(employee);
-		return Response.ok(response).build();
+		return Response.ok(ResponseUtil.getApiResponse(emp, 200, true)).build();
 	}
 	
 	

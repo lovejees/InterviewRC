@@ -64,7 +64,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 		List<Employee> list1,list2;
 		StringBuilder queryBuilder = new StringBuilder();
 		   queryBuilder.append(
-		       "WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name FROM employee WHERE employee_id = "+emp1+" UNION SELECT e.employee_id, e.parent_id, e.employee_name FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId FROM subordinates;;");
+		       "WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name,join_date FROM employee WHERE employee_id = "+emp1+" UNION SELECT e.employee_id, e.parent_id, e.employee_name,e.join_date FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate FROM subordinates;;");
 		   try (Handle handle = dbi.open()) {
 		     list1 = handle.createQuery(queryBuilder.toString())
 					.map(Employee.class).list();
