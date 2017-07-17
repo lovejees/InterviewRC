@@ -1,4 +1,4 @@
-package com.homeshope.item;
+package com.phone.tool.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

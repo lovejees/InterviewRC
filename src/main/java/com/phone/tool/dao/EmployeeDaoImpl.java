@@ -1,12 +1,10 @@
 package com.phone.tool.dao;
 
-import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-
-import com.homeshope.item.Item;
 
 import phone.tool.pojo.Employee;
 
@@ -46,17 +44,47 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	}
 
 	@Override
-	public Employee setEmployee(Employee emp) {
+	public List<Employee> setEmployee(List<Employee> emplist) {
 	    StringBuilder queryBuilder = new StringBuilder();
-	    queryBuilder.append(" insert into employee (id,name,parent_id,is_active,age,join_date) ")
-	        .append(" values(nextval('employee_id_seq'),:name,:parentId,:isActive,:age,:joinDate) ")
-	        .append(" returning id ");
+	    List<Employee> returnList = new ArrayList<Employee>();
+	    for(Employee emp : emplist){
+	    queryBuilder.append(" insert into employee (employee_id,employee_name,parent_id,is_active,age,join_date) ")
+	        .append(" values(nextval('employee_id_sequence'),:employee_name,:parentId,:isActive,:age,:joinDate) ")
+	        .append(" returning employee_id ");
 	    try (Handle handle = dbi.open()) {
-	      return handle.createQuery(queryBuilder.toString()).bind("name", emp.getName()).bind("parentId", emp.getParentId())
+	       returnList.add(handle.createQuery(queryBuilder.toString()).bind("employee_name", emp.getName()).bind("parentId", emp.getParentId())
 	         .bind("isActive", emp.isActive()).bind("age", emp.getAge()).bind("joinDate", emp.getJoinDate())
-	          .map(Employee.class).first();
+	          .map(Employee.class).first());
 	    }
+	  }return returnList;
 	  }
+
+	@Override
+	public List<Employee> getShortestPath(Integer emp1, Integer emp2) {
+		List<Employee> list1,list2;
+		StringBuilder queryBuilder = new StringBuilder();
+		   queryBuilder.append(
+		       "WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name FROM employee WHERE employee_id = "+emp1+" UNION SELECT e.employee_id, e.parent_id, e.employee_name FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId FROM subordinates;;");
+		   try (Handle handle = dbi.open()) {
+		     list1 = handle.createQuery(queryBuilder.toString())
+					.map(Employee.class).list();
+		   }
+		   
+		   StringBuilder queryBuilder2 = new StringBuilder();
+		   queryBuilder2.append(
+		       "WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name FROM employee WHERE employee_id = "+emp2+" UNION SELECT e.employee_id, e.parent_id, e.employee_name FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId FROM subordinates;;");
+		   try (Handle handle = dbi.open()) {
+		     list2 = handle.createQuery(queryBuilder.toString())
+					.map(Employee.class).list();
+		   }
+		   
+		return getShortestPath(list1,list2);
+	}
+
+	private List<Employee> getShortestPath(List<Employee> list1, List<Employee> list2) {
+		return null;
+	}
+	
 	
 
 

@@ -1,4 +1,4 @@
-package com.homeshope.item;
+package com.phone.tool.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class EmployeeResource {
 	@Path("subtree/{employeeId}")
 	@GET
 	public Response getSubtree(@PathParam("employeeId") int employeeId) {
-		List<Employee> data = employeeDao.getSubTree(employeeId, false);
+		List<Employee> data = employeeDao.getSubTree(employeeId, true);
 
 		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
@@ -48,23 +48,35 @@ public class EmployeeResource {
 		List<Employee> data = employeeDao.getTree(employeeId);
 
 		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+	}	
+
+
+	@Path("subtree/joinDate/{employeeId}")
+	@GET
+	public Response getSubtreeWithGreaterJoinDate(@PathParam("employeeId") int employeeId) {
+		List<Employee> data = employeeDao.getSubTree(employeeId, false);
+
+		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
+	
 
-	@Path("setTree")
-	@POST
-	public Response setSubtree(@FormParam("name") String name, @FormParam("employeeId") Integer employeeId,
-			@FormParam("parentId") Integer parentId) {
+	@Path("subtree/shortestpath/{employeeId}")
+	@GET
+	public Response getShortestPath(@PathParam("employeeId") int employeeId) {
+		List<Employee> data = employeeDao.getSubTree(employeeId, false);
 
-		return null;
+		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
-
+	
 	@POST
-	@Path("employee/create")
+	@Path("createtree")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createEmployee(Employee employee) {
+	public Response createEmployee(List<Employee> employee) {
 		ApiResponse response = null;
-		Employee emp = employeeDao.setEmployee(employee);
+		List<Employee> emp = employeeDao.setEmployee(employee);
 		return Response.ok(response).build();
 	}
+	
+	
 }

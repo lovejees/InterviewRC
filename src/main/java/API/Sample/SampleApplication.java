@@ -2,7 +2,7 @@ package API.Sample;
 
 import org.skife.jdbi.v2.DBI;
 
-import com.homeshope.item.EmployeeResource;
+import com.phone.tool.resources.EmployeeResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.jdbi.DBIFactory;
