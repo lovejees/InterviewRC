@@ -1,7 +1,22 @@
 package phone.tool.pojo;
 
+import java.sql.Date;
+
 public class Employee {
 
+	String name;
+	Integer employeeId;
+	Integer parentId;	
+	boolean isActive;
+	Integer Age;
+	Date joinDate;
+	
+	public Date getJoinDate() {
+		return joinDate;
+	}
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
+	}
 	public String getName() {
 		return name;
 	}
@@ -21,7 +36,17 @@ public class Employee {
 		this.parentId = parentId;
 	}
 	
-	String name;
-	Integer employeeId;
-	Integer parentId;	
+	public boolean isActive() {
+		return isActive;
+	}
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	public Integer getAge() {
+		return Age;
+	}
+	public void setAge(Integer age) {
+		Age = age;
+	}
+	
 }
