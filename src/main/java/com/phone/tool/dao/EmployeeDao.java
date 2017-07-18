@@ -12,9 +12,11 @@ public interface EmployeeDao {
 
 	public Employee createEmployee(Employee emp);
 
-	public List<Employee> getShortestPath(Integer emp);
+	public List<Employee> getAncestorPath(Integer emp);
 	
 	public Integer updateEmployee(Employee emp);
 	
 	public Employee getEmployee(Integer employeeId);
+	
+	public List<Employee> getAll();
 }

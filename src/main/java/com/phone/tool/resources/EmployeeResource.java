@@ -36,8 +36,8 @@ public class EmployeeResource {
 	@GET
 	public Response getSubtree(@PathParam("employeeId") int employeeId) {
 
-		// check for employeeId mustbe greater than 0
-
+		if (employeeId <= 0)
+			return Response.ok(ResponseUtil.getApiResponse("Invalid Employee Id", 400, false)).build();
 		List<Employee> data = employeeDao.getSubTree(employeeId, true);
 
 		if (data != null && !data.isEmpty())
@@ -49,27 +49,58 @@ public class EmployeeResource {
 	@Path("tree/{employeeId}")
 	@GET
 	public Response getTree(@PathParam("employeeId") int employeeId) {
-		List<Employee> data = employeeDao.getTree(employeeId);
 
-		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		if (employeeId <= 0)
+			return Response.ok(ResponseUtil.getApiResponse("Invalid Employee Id", 400, false)).build();
+
+		List<Employee> data = employeeDao.getTree(employeeId);
+		if (data != null && !data.isEmpty())
+			return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		else
+			return Response.ok(ResponseUtil.getApiResponse(" record not found", 400, false)).build();
+	}
+
+	@Path("all")
+	@GET
+	public Response getAll() {
+
+		List<Employee> data = employeeDao.getAll();
+		if (data != null && !data.isEmpty())
+			return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		else
+			return Response.ok(ResponseUtil.getApiResponse("Records not found", 400, false)).build();
 	}
 
 	@Path("subtree/joindate/{employeeId}")
 	@GET
 	public Response getSubtreeWithGreaterJoinDate(@PathParam("employeeId") int employeeId) {
+		if (employeeId <= 0)
+			return Response.ok(ResponseUtil.getApiResponse("Invalid Employee Id", 400, false)).build();
 		List<Employee> data = employeeDao.getSubTree(employeeId, false);
-		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		if (data != null && !data.isEmpty())
+			return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		else
+			return Response.ok(ResponseUtil.getApiResponse(" record not found", 400, false)).build();
+
 	}
 
 	@Path("shortestpath/{employeeId1}/{employeeId2}")
 	@GET
 	public Response getShortestPath(@PathParam("employeeId1") int employeeId1,
 			@PathParam("employeeId2") int employeeId2) {
-		List<Employee> empList1 = employeeDao.getShortestPath(employeeId1);
-		List<Employee> empList2 = employeeDao.getShortestPath(employeeId2);
-		return Response.ok(ResponseUtil
-				.getApiResponse(TreeUtil.getShortestPath(empList1, empList2, employeeId1, employeeId2), 200, true))
-				.build();
+		if (employeeId1 <= 0 || employeeId2 <= 0)
+			return Response.ok(ResponseUtil.getApiResponse("Invalid Employee Id", 400, false)).build();
+
+		List<Employee> empList1 = employeeDao.getAncestorPath(employeeId1);
+		List<Employee> empList2 = employeeDao.getAncestorPath(employeeId2);
+		if (empList1.isEmpty() && empList2.isEmpty()) {
+			return Response.ok(ResponseUtil.getApiResponse(null, 410, false)).build();
+		}
+		List<Employee> data = TreeUtil.getShortestPath(empList1, empList2, employeeId1, employeeId2);
+		if (data != null && !data.isEmpty())
+			return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
+		else
+			return Response.ok(ResponseUtil.getApiResponse("Record not found", 400, false)).build();
 	}
 
 	@POST
@@ -77,17 +108,20 @@ public class EmployeeResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createEmployee(@NotNull List<Employee> employees) {
-		System.out.println("Aaagi Post");
-		if (!employees.isEmpty())
+		if (!employees.isEmpty()) {
 			for (Employee emp : employees) {
-				System.out.println(emp.getEmployeeId());
-				if (employeeDao.getEmployee(emp.getEmployeeId()) == null) {
-					employeeDao.createEmployee(emp);
-				} else {
-					employeeDao.updateEmployee(emp);
+				if (employeeDao.getEmployee(emp.getParentId()) != null) {
+					if (employeeDao.getEmployee(emp.getEmployeeId()) == null ) {
+						employeeDao.createEmployee(emp);
+					} else {
+						employeeDao.updateEmployee(emp);
+					}
 				}
 			}
-		return Response.ok(ResponseUtil.getApiResponse("record saved", 200, true)).build();
-	}
+			return Response.ok(ResponseUtil.getApiResponse("Records saved", 200, true)).build();
+		} else
+			return Response.ok(ResponseUtil.getApiResponse("Invalid Data", 400, false)).build();
 
+	}
+	
 }

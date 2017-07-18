@@ -17,7 +17,6 @@ public class SampleConfiguration extends Configuration{
 	 private DataSourceFactory dataSource = new DataSourceFactory();
 
 	public PooledDataSourceFactory getDataSource() {
-		// TODO Auto-generated method stub
 		return dataSource;
 	}
 	 

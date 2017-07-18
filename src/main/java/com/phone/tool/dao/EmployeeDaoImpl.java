@@ -1,6 +1,5 @@
 package com.phone.tool.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.skife.jdbi.v2.DBI;
@@ -50,59 +49,67 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	@Override
 	public Employee createEmployee(Employee emp) {
 		StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder.append(" insert into employee (employee_id,employee_name,parent_id,is_active,age,join_date) ")
-				.append(" values(nextval('employee_id_sequence'),:employee_name,:parentId,:isActive,:age,:joinDate) ")
+		queryBuilder.append(" insert into employee (employee_id,employee_name,parent_id,join_date) ")
+				.append(" values(nextval('employee_id_sequence'),:employee_name,:parentId,:joinDate) ")
 				.append(" returning employee_id ");
 		try (Handle handle = dbi.open()) {
 			return handle.createQuery(queryBuilder.toString()).bind("employee_name", emp.getName())
-					.bind("parentId", emp.getParentId()).bind("isActive", emp.isActive()).bind("age", emp.getAge())
-					.bind("joinDate", emp.getJoinDate()).map(Employee.class).first();
+					.bind("parentId", emp.getParentId()).bind("joinDate", emp.getJoinDate()).map(Employee.class)
+					.first();
 		}
 	}
 
 	@Override
-	public List<Employee> getShortestPath(Integer emp) {
+	public List<Employee> getAncestorPath(Integer emp) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder
 				.append("WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name,join_date FROM employee WHERE employee_id = "
 						+ emp
-						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name,e.join_date FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate FROM subordinates where employee_id <> " + emp +";");
+						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name,e.join_date FROM employee e INNER JOIN subordinates s ON s.parent_id = e.employee_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate FROM subordinates where employee_id <> "
+						+ emp + ";");
 		try (Handle handle = dbi.open()) {
 			return handle.createQuery(queryBuilder.toString()).map(Employee.class).list();
 		}
 	}
-	
+
 	public Integer updateEmployee(Employee emp) {
 
 		StringBuilder queryBuilder = new StringBuilder();
 
 		queryBuilder
 
-		.append("UPDATE employee set name = :name ,parent_id=:parentId,is_active=:isActive,join_date = joinDate,age=:age ")
+				.append("UPDATE employee set employee_name = :name ,parent_id=:parentId")
 
-		.append(" WHERE employee_id=:id ;");
+				.append(" WHERE employee_id=:id ;");
 
 		try (Handle handle = dbi.open()) {
 
-		return handle.createStatement(queryBuilder.toString()).bind("id", emp.getEmployeeId())
+			return handle.createStatement(queryBuilder.toString()).bind("id", emp.getEmployeeId())
 
-		.bind("name", emp.getName()).bind("parentId", emp.getParentId()).bind("isActive", emp.isActive())
-
-		.bind("age", emp.getAge()).bind("joinDate", emp.getJoinDate()).execute();
+					.bind("name", emp.getName()).bind("parentId", emp.getParentId()).execute();
 
 		}
 
-		}
+	}
 
 	@Override
 	public Employee getEmployee(Integer employeeId) {
 		StringBuilder queryBuilder = new StringBuilder();
-		queryBuilder
-				.append("select * from employee where employee_id = "+ employeeId +";");
-				try (Handle handle = dbi.open()) {
+		queryBuilder.append("select * from employee where employee_id = " + employeeId + ";");
+		try (Handle handle = dbi.open()) {
 			return handle.createQuery(queryBuilder.toString()).map(Employee.class).first();
 		}
-		
+
+	}
+
+	@Override
+	public List<Employee> getAll() {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder.append(
+				"select employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate from employee;");
+		try (Handle handle = dbi.open()) {
+			return handle.createQuery(queryBuilder.toString()).map(Employee.class).list();
+		}
 	}
 
 }

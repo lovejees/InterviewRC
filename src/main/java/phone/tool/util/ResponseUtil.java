@@ -7,8 +7,8 @@ public class ResponseUtil {
 	public static ApiResponse getApiResponse(Object data , Integer status ,Boolean isSucess){
 		ApiResponse apiResponse = new ApiResponse();
 		apiResponse .setData(data);
-		apiResponse.setStatus(200);
-		apiResponse.setSuccess(true);
+		apiResponse.setStatus(status);
+		apiResponse.setSuccess(isSucess);
 		return apiResponse;
 	}
 

@@ -9,11 +9,11 @@ public class TreeUtil {
 
 	public static List<Employee> getShortestPath(List<Employee> list1, List<Employee> list2, Integer empId1,
 			Integer empId2) {
-		if (list1.size() == 0) {
+		if (list1.size() == 0 && list2.size()!=0) {
 			return list2.subList(0, list2.size() - 1);
 		}
 
-		if (list2.size() == 0) {
+		if (list2.size() == 0 && list2.size()!=0) {
 			return list1.subList(0, list1.size() - 1);
 		}
 
