@@ -19,9 +19,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	public List<Employee> getSubTree(Integer employeeId, boolean isJoinDate) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder
-				.append("WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name FROM employee WHERE employee_id = "
+				.append("WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name,join_date FROM employee WHERE employee_id = "
 						+ employeeId
-						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name FROM employee e INNER JOIN subordinates s ON s.employee_id = e.parent_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId  ");
+						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name,e.join_date FROM employee e INNER JOIN subordinates s ON s.employee_id = e.parent_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate ");
 		if (isJoinDate) {
 			queryBuilder.append(" FROM subordinates where employee_id <> " + employeeId + ";");
 		} else {
@@ -39,9 +39,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	public List<Employee> getTree(Integer employeeId) {
 		StringBuilder queryBuilder = new StringBuilder();
 		queryBuilder
-				.append("WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name FROM employee WHERE employee_id = "
+				.append("WITH RECURSIVE subordinates AS (SELECT employee_id,parent_id,employee_name,join_date FROM employee WHERE employee_id = "
 						+ employeeId
-						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name FROM employee e INNER JOIN subordinates s ON s.employee_id = e.parent_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId  FROM subordinates;");
+						+ " UNION SELECT e.employee_id, e.parent_id, e.employee_name,e.join_date FROM employee e INNER JOIN subordinates s ON s.employee_id = e.parent_id) SELECT employee_name as name,parent_id as parentId,employee_id as employeeId,join_date as joinDate  FROM subordinates;");
 		try (Handle handle = dbi.open()) {
 			return handle.createQuery(queryBuilder.toString()).map(Employee.class).list();
 		}

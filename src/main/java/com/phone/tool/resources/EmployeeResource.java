@@ -54,7 +54,7 @@ public class EmployeeResource {
 		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
 
-	@Path("subtree/joinDate/{employeeId}")
+	@Path("subtree/joindate/{employeeId}")
 	@GET
 	public Response getSubtreeWithGreaterJoinDate(@PathParam("employeeId") int employeeId) {
 		List<Employee> data = employeeDao.getSubTree(employeeId, false);
