@@ -61,7 +61,7 @@ public class EmployeeResource {
 		return Response.ok(ResponseUtil.getApiResponse(data, 200, true)).build();
 	}
 
-	@Path("subtree/shortestpath/{employeeId1}/{employeeId2}")
+	@Path("shortestpath/{employeeId1}/{employeeId2}")
 	@GET
 	public Response getShortestPath(@PathParam("employeeId1") int employeeId1,
 			@PathParam("employeeId2") int employeeId2) {
@@ -77,8 +77,10 @@ public class EmployeeResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createEmployee(@NotNull List<Employee> employees) {
+		System.out.println("Aaagi Post");
 		if (!employees.isEmpty())
 			for (Employee emp : employees) {
+				System.out.println(emp.getEmployeeId());
 				if (employeeDao.getEmployee(emp.getEmployeeId()) == null) {
 					employeeDao.createEmployee(emp);
 				} else {
