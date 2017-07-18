@@ -80,7 +80,7 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 		.append("UPDATE employee set name = :name ,parent_id=:parentId,is_active=:isActive,join_date = joinDate,age=:age ")
 
-		.append(" WHERE id=:id ;");
+		.append(" WHERE employee_id=:id ;");
 
 		try (Handle handle = dbi.open()) {
 
