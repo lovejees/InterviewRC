@@ -10,7 +10,7 @@ public interface EmployeeDao {
 
 	public List<Employee> getTree(Integer employeeId);
 
-	public List<Employee> setEmployee(List<Employee> employee);
+	public Employee createEmployee(Employee emp);
 
-	public List<Employee> getShortestPath(Integer emp1, Integer emp2);
+	public List<Employee> getShortestPath(Integer emp);
 }
