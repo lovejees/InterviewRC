@@ -79,7 +79,11 @@ public class EmployeeResource {
 	public Response createEmployee(@NotNull List<Employee> employees) {
 		if (!employees.isEmpty())
 			for (Employee emp : employees) {
-				employeeDao.createEmployee(emp);
+				if (employeeDao.getEmployee(emp.getEmployeeId()) == null) {
+					employeeDao.createEmployee(emp);
+				} else {
+					employeeDao.updateEmployee(emp);
+				}
 			}
 		return Response.ok(ResponseUtil.getApiResponse("record saved", 200, true)).build();
 	}

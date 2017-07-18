@@ -71,5 +71,38 @@ public class EmployeeDaoImpl implements EmployeeDao {
 			return handle.createQuery(queryBuilder.toString()).map(Employee.class).list();
 		}
 	}
+	
+	public Integer updateEmployee(Employee emp) {
+
+		StringBuilder queryBuilder = new StringBuilder();
+
+		queryBuilder
+
+		.append("UPDATE employee set name = :name ,parent_id=:parentId,is_active=:isActive,join_date = joinDate,age=:age ")
+
+		.append(" WHERE id=:id ;");
+
+		try (Handle handle = dbi.open()) {
+
+		return handle.createStatement(queryBuilder.toString()).bind("id", emp.getEmployeeId())
+
+		.bind("name", emp.getName()).bind("parentId", emp.getParentId()).bind("isActive", emp.isActive())
+
+		.bind("age", emp.getAge()).bind("joinDate", emp.getJoinDate()).execute();
+
+		}
+
+		}
+
+	@Override
+	public Employee getEmployee(Integer employeeId) {
+		StringBuilder queryBuilder = new StringBuilder();
+		queryBuilder
+				.append("select * from employee where employee_id = "+ employeeId +";");
+				try (Handle handle = dbi.open()) {
+			return handle.createQuery(queryBuilder.toString()).map(Employee.class).first();
+		}
+		
+	}
 
 }
